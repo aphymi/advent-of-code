@@ -1,2 +1,2 @@
 # advent-of-code-2018
-Python solutions to the coding challenges from https://adventofcode.com/
+My Python solutions to the coding challenges at https://adventofcode.com/
