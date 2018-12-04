@@ -1,13 +1,15 @@
+def preprocess_input(lines):
+	return list(map(int, lines))
+
 def part1(freqs):
-	return str(sum(map(int, freqs)))
+	return sum(freqs)
 
 def part2(freqs):
-	inp = list(map(int, freqs))
 	cur = 0
-	seen = {0}
+	seen = {cur}
 	while True:
-		for change in inp:
-			cur += change
+		for freq in freqs:
+			cur += freq
 			if cur in seen:
 				return cur
 			seen.add(cur)

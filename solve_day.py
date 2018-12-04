@@ -62,6 +62,9 @@ if __name__ == "__main__":
 	input_lines = retrieve_day_input(args.day, day_name)
 	
 	parts_to_eval = ("1", "2") if args.part is None else (args.part,)
+
+	if hasattr(day_mod, "preprocess_input"):
+		input_lines = day_mod.preprocess_input(input_lines)
 	
 	for part in parts_to_eval:
 		part_name = "part" + part
