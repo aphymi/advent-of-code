@@ -3,3 +3,6 @@ __pycache__/
 
 # IDE files
 .idea/
+
+# AoC Session cookie; definitely do *not* want to commit.
+.session
