@@ -1,35 +1,25 @@
-from datetime import datetime
-import re
-
 def preprocess_input(lines):
-	lines_re = re.compile(r"\[(?P<dt>[^\]]+)\] (?P<text>.+)")
-	
-	parsed_lines = []
-	for line in lines:
-		match = lines_re.match(line).groupdict()
-		dt = datetime.strptime(match["dt"], "%Y-%m-%d %H:%M")
-		if match["text"].startswith("Guard"):
-			match["gid"] = int(re.search("(\d+)", match["text"]).groups()[0])
-		parsed_lines.append((dt, match))
-	
-	parsed_lines.sort(key=lambda l: l[0])
+	lines.sort()
 	
 	logs = {}
-	last_sl_start = 0
-	last_guard = 0
-	for dt, match in parsed_lines:
+	last_sl_start = None
+	last_guard = None
+	for line in lines:
+		brack = line.index("]")
+		minute = int(line[brack-2:brack])
+		text = line[brack+2:]
 		
-		if "gid" in match:
-			gid = match["gid"]
-			if gid not in logs:
-				logs[gid] = []
-			last_guard = gid
+		if "#" in text:
+			num = text.index("#")
+			last_guard = int(text[num+1:text.index(" ", num)])
+			if last_guard not in logs:
+				logs[last_guard] = []
 		
-		elif match["text"] == "falls asleep":
-			last_sl_start = dt.minute
+		elif text == "falls asleep":
+			last_sl_start = minute
 		
-		elif match["text"] == "wakes up":
-			logs[last_guard].append((last_sl_start, dt.minute))
+		elif text == "wakes up":
+			logs[last_guard].append((last_sl_start, minute))
 	
 	return logs
 
