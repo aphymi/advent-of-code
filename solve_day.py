@@ -32,7 +32,7 @@ def retrieve_day_input(day, day_name):
 		input_file = r.text
 
 		with open("inputs/" + day_name + ".txt", "w") as file:
-			file.write(input_file)
+			file.write(input_file.strip())
 
 	return input_file.splitlines()
 
