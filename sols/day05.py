@@ -23,8 +23,9 @@ def part1(units):
 	return len(react(units))
 
 def part2(units):
-	# Get a list of (character, len of reactted chain without character)
-	lens = [len(react([c for c in units if c not in (o, o.upper())]))
-			for o in ascii_lowercase]
-	return min(lens)
-
+	# Reacting the full chain before filtering letters individually will do a bunch of work upfront
+	#   without affecting the result, and so save a lot of time during the a-z iteration.
+	reacted_units = react(units)
+	
+	return min([len(react([c for c in reacted_units if c not in (o, o.upper())]))
+					for o in ascii_lowercase])
