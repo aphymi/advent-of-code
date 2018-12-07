@@ -1,3 +1,4 @@
+from collections import Counter
 from functools import reduce
 
 def preprocess_input(lines):
@@ -16,21 +17,12 @@ def preprocess_input(lines):
 		maxx = max(maxx, x)
 		miny = min(miny, y)
 		maxy = max(maxy, y)
-
-	aminx = minx - (maxx-minx)
-	aminy = miny - (maxy-miny)
-	amaxx = maxx + (maxx-minx)
-	amaxy = maxy + (maxy-miny)
 	
 	maxmins = {
 		"minx": minx,
 		"maxx": maxx,
 		"miny": miny,
 		"maxy": maxy,
-		"aminx": aminx,
-		"amaxx": amaxx,
-		"aminy": aminy,
-		"amaxy": amaxy
 	}
 	
 	return (coords, maxmins)
@@ -44,7 +36,7 @@ def closest(coords, x, y):
 	tie = False
 
 	for cx, cy in coords:
-		dist = mdistance(cx, cy, x, y)
+		dist = abs(cx-x) + abs(cy-y)
 		if dist < closest_dist:
 			closest_coord = (cx, cy)
 			closest_dist = dist
@@ -60,18 +52,18 @@ def part1(inp):
 	infinites = set()
 	
 	# Get coords that have infinite area.
-	for x in range(aminx, amaxx+1): # top and bottom edge
-		for y in (aminy, amaxy):
+	for x in range(minmaxs["minx"], minmaxs["maxx"]+1): # top and bottom edge
+		for y in (minmaxs["miny"], minmaxs["maxy"]+1):
 			infinites.add(closest(coords, x, y))
 	
-	for y in range(aminy, amaxy+1): # left and right edge
-		for x in (aminx, amaxx):
+	for y in range(minmaxs["miny"], minmaxs["maxy"]+1): # left and right edge
+		for x in (minmaxs["minx"], minmaxs["maxx"]+1):
 			infinites.add(closest(coords, x, y))
 
-	areas = {coord: 0 for coord in coords}
+	areas = Counter(coords)
 
-	for x in range(minx, maxx+1):
-		for y in range(miny, maxy+1):
+	for x in range(minmaxs["minx"], minmaxs["maxx"]+1):
+		for y in range(minmaxs["miny"], minmaxs["maxy"]+1):
 			closest_dist = float("inf")
 			closest_coord = None
 			tie = False
@@ -95,10 +87,9 @@ def part2(inp):
 	
 	safes = 0
 	# Going to just assume that the safe regions stops within the adjusted region. May or may not be generally true.
-	for x in range(minmaxs["aminx"], minmaxs["amaxx"]+1):
-		for y in range(minmaxs["aminy"], minmaxs["amaxy"]+1):
-			if reduce(lambda s, c: s + mdistance(c[0], c[1], x, y), coords, 0) < 10000:
-				safes += 1
+	for x in range(minmaxs["minx"], minmaxs["maxx"]+1):
+		for y in range(minmaxs["miny"], minmaxs["maxy"]+1):
+			safes += reduce(lambda s, c: s + (abs(c[0]-x) + abs(c[1]-y)), coords, 0) < 10000
 	
 	return safes
 
