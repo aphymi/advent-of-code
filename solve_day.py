@@ -2,14 +2,24 @@
 
 import argparse
 from importlib import import_module
+import os
 import sys
 
 import requests
 
-def retrieve_day_input(day, day_name):
+def dname(day):
+	return "day{:02d}".format(day)
+
+def yname(year):
+	return "y{}".format(year)
+
+def retrieve_input(year, day):
+	file_name = "{}/inputs/{}.txt".format(yname(year), dname(day))
+	if not os.path.exists(file_name):
+		os.makedirs(os.path.dirname(file_name))
 	
 	try:
-		with open("inputs/" + day_name + ".txt") as file:
+		with open(file_name) as file:
 			input_file = file.read()
 	
 	except FileNotFoundError:
@@ -22,7 +32,7 @@ def retrieve_day_input(day, day_name):
 			print("Error: Neither saved input file nor .session cookie file could be found.")
 			sys.exit(1)
 		
-		r = requests.get("https://adventofcode.com/2018/day/{}/input".format(day),
+		r = requests.get("https://adventofcode.com/{}/day/{}/input".format(year, day),
 							cookies={"session": sess})
 
 		if r.status_code != 200:
@@ -31,7 +41,7 @@ def retrieve_day_input(day, day_name):
 		
 		input_file = r.text
 
-		with open("inputs/" + day_name + ".txt", "w") as file:
+		with open(file_name, "w") as file:
 			file.write(input_file.strip())
 
 	return input_file.splitlines()
@@ -39,10 +49,13 @@ def retrieve_day_input(day, day_name):
 if __name__ == "__main__":
 	
 	parser = argparse.ArgumentParser(description="Solve a day of the advent of code.")
-	parser.add_argument("day", metavar="day", type=int,
-						help="the number of the day to solve")
+	parser.add_argument("day", type=int,
+						help="which day to solve the problem for")
 	parser.add_argument("--part", "-p", dest="part", default=None, choices=("1", "2"),
 						help="the particular part to solve, instead of both")
+	years = [dirname[1:] for dirname in os.listdir(".") if dirname.startswith("y")]
+	parser.add_argument("--year", "-y", dest="year", default=max(years), choices=years,
+						help="which year to solve the day for")
 	
 	args = parser.parse_args()
 	
@@ -50,25 +63,23 @@ if __name__ == "__main__":
 		print("Error: Day must be in range [1,25].")
 		sys.exit(1)
 	
-	day_name = "day{:02d}".format(args.day)
-	
 	try:
-		day_mod = import_module("sols." + day_name)
+		day_mod = import_module("{}.{}".format(yname(args.year), dname(args.day)))
 	
 	except ImportError:
-		print("Error: No solution module found for {}.".format(day_name))
+		print("Error: No solution module found for {}-{}.".format(yname(args.year), dname(args.day)))
 		sys.exit(1)
 	
-	input_lines = retrieve_day_input(args.day, day_name)
+	lines = retrieve_input(args.year, args.day)
 	
 	parts_to_eval = ("1", "2") if args.part is None else (args.part,)
 
 	if hasattr(day_mod, "preprocess_input"):
-		input_lines = day_mod.preprocess_input(input_lines)
+		lines = day_mod.preprocess_input(lines)
 	
 	for part in parts_to_eval:
 		part_name = "part" + part
 		if not hasattr(day_mod, part_name):
-			print("Error: Solution for day {} has no function {}.".format(args.day, part_name))
+			print("Error: Solution for year-{} day-{} has no function {}.".format(args.year, args.day, part_name))
 		else:
-			print("Part {} answer: {}".format(part, getattr(day_mod, part_name)(input_lines)))
+			print("Part {} answer: {}".format(part, getattr(day_mod, part_name)(lines)))
