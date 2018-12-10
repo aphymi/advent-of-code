@@ -14,9 +14,10 @@ def yname(year):
 	return "y{}".format(year)
 
 def retrieve_input(year, day):
-	file_name = "{}/inputs/{}.txt".format(yname(year), dname(day))
-	if not os.path.exists(file_name):
-		os.makedirs(os.path.dirname(file_name))
+	file_dir = "{}/inputs/".format(yname(year))
+	file_name = file_dir + "{}.txt".format(dname(day))
+	if not os.path.isdir(file_dir):
+		os.makedirs(file_dir)
 	
 	try:
 		with open(file_name) as file:
