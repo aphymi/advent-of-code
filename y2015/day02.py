@@ -14,7 +14,6 @@ def part1(dims):
 		sas = [l*w, w*h, l*h]
 		return 2*sum(sas) + min(sas)
 
-
 	return reduce(lambda s, dim: s+paper(dim), dims, 0)
 
 def part2(dims):
