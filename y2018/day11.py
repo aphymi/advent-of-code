@@ -1,24 +1,40 @@
 def preprocess_input(lines):
-	return [[((((x+11)*(y+1) + int(lines[0])) * (x+11)) // 100 % 10) - 5 for x in range(300)]
-							for y in range(300)]
-
-def grid(x, y, size):
-	return [(x+xm, y+ym) for xm in range(size) for ym in range(size)]
-
-def part1(pwls):
-	maxx, maxy = max(((x, y) for x in range(298) for y in range(298)),
-				  key=lambda c: sum([pwls[y_][x_] for x_, y_ in grid(c[0], c[1], 3)]))
+	pwls = [[((((x + 11) * (y + 1) + int(lines[0])) * (x + 11)) // 100 % 10) - 5 for y in range(300)]
+			for x in range(300)]
 	
-	return (maxx+1, maxy+1)
-
-def part2(pwls):
-	max_power = (-1, -1, float("-inf"))
+	sat = [[0 for _ in range(300)] for _ in range(300)]
 	
 	for x, y in ((x, y) for x in range(300) for y in range(300)):
-		cur_power = 0
-		for size in range(300-max(x, y)):
-			cur_power += (sum(pwls[y_][x+size] for y_ in range(y, y+size+1)) +
-			              sum(pwls[y+size][x_] for x_ in range(x, x+size)))
-			max_power = max(max_power, (x, y, cur_power), key=lambda p: p[2])
+		sat[x][y] = pwls[x][y]
+		if x > 0:
+			sat[x][y] += sat[x-1][y]
+		if y > 0:
+			sat[x][y] += sat[x][y-1]
+		if x > 0 and y > 0:
+			sat[x][y] -= sat[x-1][y-1]
 	
-	return (max_power[0]+1, max_power[1]+1, max_power[2])
+	return sat
+
+
+def grid_power(sat, x, y, size):
+	a = sat[x-1][y-1] if x > 0 and y > 0 else 0
+	b = sat[x+size-1][y-1] if y > 0 else 0
+	c = sat[x-1][y+size-1] if x > 0 else 0
+	d = sat[x+size-1][y+size-1]
+	return d + a - b - c
+
+
+def part1(sat):
+	maxx, maxy = max(((x, y) for x in range(298) for y in range(298)),
+				   key=lambda c: grid_power(sat, c[0], c[1], 3))
+	
+	return (maxx + 1, maxy + 1)
+
+
+def part2(sat):
+	maxx, maxy, maxs = max(((x, y, s) for x in range(300)
+												 for y in range(300)
+												 for s in range(1, 301-max(x, y))),
+						   key=lambda c: grid_power(sat, *c))
+	
+	return (maxx+1, maxy+1, maxs)
