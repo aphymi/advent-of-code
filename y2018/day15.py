@@ -40,38 +40,33 @@ def closest(cave_map, dests, y, x):
 	
 	return min(sols) if sols else None
 
+
 def simulate(cave_map, eatt, gatt):
 	cave_map = [row.copy() for row in cave_map]
-	elves = []
-	goblins = []
+	units = []
 	t = 0
 	
 	for y, row in enumerate(cave_map):
 		for x, space in enumerate(row):
 			if space in "EG":
-				group = elves if space == "E" else goblins
-				group.append({"pos": (y, x),
+				units.append({"pos": (y, x),
 							  "hp": 200,
 							  "group": space})
 	
 	while True:
-		#if True:
-			#print("\n".join("".join(row) for row in cave_map))
-			#print(" ".join("{}({})".format(unit["group"], unit["hp"]) for unit in elves+goblins))
 		
-		for unit in sorted(elves+goblins, key=lambda u: u["pos"]):
+		for unit in sorted(units, key=lambda u: u["pos"]):
 			# If the unit is dead, skip its turn.
 			if unit["hp"] <= 0:
 				continue
 			
-			units, enemies, en_sym = \
-				(elves, goblins, "G") if unit["group"] == "E" else (goblins, elves, "E")
-			# Disregard enemies that are dead.
-			enemies = [enemy for enemy in enemies if enemy["hp"] > 0]
+			en_sym = "G" if unit["group"] == "E" else "E"
+			# Get a list of all living enemies.
+			enemies = [u for u in units if u["group"] == en_sym and u["hp"] > 0]
 			
 			# If no enemies are found, combat has reached its end.
 			if not enemies:
-				return (t, elves+goblins)
+				return (t, units)
 			
 			# Movement phase. If not already in range of a target, move towards such a range.
 			enemy_ranges = set()
@@ -91,22 +86,23 @@ def simulate(cave_map, eatt, gatt):
 					cave_map[unit["pos"][0]][unit["pos"][1]] = "."
 					cave_map[my][mx] = unit["group"]
 					unit["pos"] = (my, mx)
-				
+			
 			# Movement phase done.
 			
 			# Attack phase.:
 			ir_enemies = [get_unit_by_pos(enemies, ey, ex) for ey, ex in sorted(around(*unit["pos"]))
-						  		if cave_map[ey][ex] == en_sym]
+								if cave_map[ey][ex] == en_sym]
 			
 			if ir_enemies:
 				# Attack the in-range enemy with the lowest hp.
-				enemy = min(ir_enemies, key=lambda c: c["hp"])
+				enemy = min(ir_enemies, key=lambda e: e["hp"])
 				
 				enemy["hp"] -= eatt if unit["group"] == "E" else gatt
 				if enemy["hp"] <= 0:
 					cave_map[enemy["pos"][0]][enemy["pos"][1]] = "."
-			
+		
 		t += 1
+
 
 def part1(cave_map):
 	t, units = simulate(cave_map, 3, 3)
