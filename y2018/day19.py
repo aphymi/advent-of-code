@@ -42,34 +42,20 @@ def apply(rs, op, inp):
 	a, b, c = inp
 	rs[c] = ops[op](rs, a, b)
 
-def part1(inp):
-	ipr, insts = inp
+def run_program(ipr, insts, rs):
+	# Preserved for posterity.
 	
-	rs = [0]*6
-	
-	while True:
-		print(rs[ipr], " ".join(map(str, rs)))
-		if not 0 <= rs[ipr] < len(insts):
-			
-			break
+	while 0 <= rs[ipr] < len(insts):
 		apply(rs, *insts[rs[ipr]])
 		rs[ipr] += 1
 	
 	return rs[0]
 
-def part2(inp):
-	ipr, insts = inp
-	
-	rs = [0]*6
-	rs[0] = 1
-	
+def calc_solution(ipr, insts, rs):
 	# This requires the insight that the program is calculating the sum of all factors of a value.
-	
 	while rs[1] == 0:
 		apply(rs, *insts[rs[ipr]])
 		rs[ipr] += 1
-	
-	# The value is now in rs[2].
 	
 	factors = set()
 	for x in range(1, ceil(sqrt(rs[2]))+1):
@@ -79,3 +65,12 @@ def part2(inp):
 			factors.add(d)
 	
 	return sum(factors)
+
+def part1(inp):
+	return calc_solution(*inp, [0]*6)
+
+def part2(inp):
+	rs = [0]*6
+	rs[0] = 1
+	
+	return calc_solution(*inp, rs)
