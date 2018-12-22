@@ -8,7 +8,13 @@ def preprocess_input(lines):
 			s = line.split()
 			insts.append((s[0], list(map(int, s[1:]))))
 	
-	return (ipr, insts)
+	eq_inst = None
+	for inst in insts:
+		if inst[0] == "eqrr":
+			eq_inst = inst
+			break
+	
+	return (eq_inst[1][0] or eq_inst[1][1], ipr, insts)
 
 
 ops = {
@@ -40,19 +46,8 @@ def apply(rs, op, inp):
 	a, b, c = inp
 	rs[c] = ops[op](rs, a, b)
 
-def run_program(ipr, insts, rs):
-	t = 0
-	while 0 <= rs[ipr] < len(insts):
-		if rs[ipr] == 28:
-			print(rs)
-		apply(rs, *insts[rs[ipr]])
-		rs[ipr] += 1
-		t += 1
-	
-	return t
-
 def part1(inp):
-	ipr, insts = inp
+	eqr, ipr, insts = inp
 	
 	# Can tell by analysis of the program that the value in r0 matters in exactly one case.
 	#   If it's equal to the value of r4 at instruction 28, the program halts. Otherwise, it continues.
@@ -64,19 +59,19 @@ def part1(inp):
 		apply(rs, *insts[rs[ipr]])
 		rs[ipr] += 1
 	
-	return rs[4]
+	return rs[eqr]
 
 def part2(inp):
-	ipr, insts = inp
+	eqr, ipr, insts = inp
 	
 	rs = [0]*6
 	seen = set()
 	prev = None
 	while True:
 		if rs[ipr] == 28:
-			if rs[4] in seen:
+			if rs[eqr] in seen:
 				return prev
-			seen.add(rs[4])
-			prev = rs[4]
+			seen.add(rs[eqr])
+			prev = rs[eqr]
 		apply(rs, *insts[rs[ipr]])
 		rs[ipr] += 1
