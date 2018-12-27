@@ -35,8 +35,7 @@ def part2(insts):
 		for x in range(x1, x2+1):
 			for y in range(y1, y2+1):
 				if act == 0:
-					if lights[x][y] > 0:
-						lights[x][y] -= 1
+					lights[x][y] = max(0, lights[x][y]-1)
 				elif act == 1:
 					lights[x][y] += 1
 				else:
