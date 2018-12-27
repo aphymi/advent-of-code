@@ -4,7 +4,7 @@ import re
 def preprocess_input(lines):
 	dims = []
 	for line in lines:
-		dims.append(map(int, re.findall("\d+", line)))
+		dims.append(list(map(int, re.findall("\d+", line))))
 	
 	return dims
 
