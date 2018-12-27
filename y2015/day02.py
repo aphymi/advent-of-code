@@ -1,4 +1,3 @@
-from functools import reduce
 import re
 
 def preprocess_input(lines):
@@ -14,12 +13,12 @@ def part1(dims):
 		sas = [l*w, w*h, l*h]
 		return 2*sum(sas) + min(sas)
 
-	return reduce(lambda s, dim: s+paper(dim), dims, 0)
+	return sum(paper(dim) for dim in dims)
 
 def part2(dims):
 	def ribbon(dim):
 		l, w, h = dim
 		return 2*min(l+w, w+h, l+h) + l*w*h
 	
-	return reduce(lambda s, dim: s+ribbon(dim), dims, 0)
+	return sum(ribbon(dim) for dim in dims)
 
