@@ -1,12 +1,9 @@
 from collections import Counter
 from functools import reduce
 
-def preprocess_input(lines):
-	coords = []
-	for line in lines:
-		(a, b) = line.split(", ")
-		coords.append((int(a), int(b)))
-	
+from util.parse import *
+
+def get_minmaxes(coords):
 	minx = float("inf")
 	maxx = float("-inf")
 	miny = float("inf")
@@ -18,14 +15,17 @@ def preprocess_input(lines):
 		miny = min(miny, y)
 		maxy = max(maxy, y)
 	
-	maxmins = {
+	minmaxs = {
 		"minx": minx,
 		"maxx": maxx,
 		"miny": miny,
 		"maxy": maxy,
 	}
 	
-	return (coords, maxmins)
+	return minmaxs
+
+parse_input = compose(lambda cs: (cs, get_minmaxes(cs)), map_func(tuple), get_ints)
+
 
 def mdistance(x1, y1, x2, y2):
 	return abs(x1 - x2) + abs(y1 - y2)
@@ -46,6 +46,7 @@ def closest(coords, x, y):
 	
 	return closest_coord if not tie else None
 
+# TODO part1 gives an output that's too large by 1.
 def part1(inp):
 	coords, minmaxs = inp
 	

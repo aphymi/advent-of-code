@@ -1,5 +1,7 @@
-def preprocess_input(lines):
-	pwls = [[((((x + 11) * (y + 1) + int(lines[0])) * (x + 11)) // 100 % 10) - 5 for y in range(300)]
+from util.parse import *
+
+def gen_sat(serial):
+	pwls = [[((((x + 11) * (y + 1) + serial) * (x + 11)) // 100 % 10) - 5 for y in range(300)]
 			for x in range(300)]
 	
 	sat = [[0 for _ in range(300)] for _ in range(300)]
@@ -7,14 +9,15 @@ def preprocess_input(lines):
 	for x, y in ((x, y) for x in range(300) for y in range(300)):
 		sat[x][y] = pwls[x][y]
 		if x > 0:
-			sat[x][y] += sat[x-1][y]
+			sat[x][y] += sat[x - 1][y]
 		if y > 0:
-			sat[x][y] += sat[x][y-1]
+			sat[x][y] += sat[x][y - 1]
 		if x > 0 and y > 0:
-			sat[x][y] -= sat[x-1][y-1]
+			sat[x][y] -= sat[x - 1][y - 1]
 	
 	return sat
 
+parse_input = compose(gen_sat, int, single_line)
 
 def grid_power(sat, x, y, size):
 	a = sat[x-1][y-1] if x > 0 and y > 0 else 0
@@ -33,8 +36,8 @@ def part1(sat):
 
 def part2(sat):
 	maxx, maxy, maxs = max(((x, y, s) for x in range(300)
-												 for y in range(300)
-												 for s in range(1, 301-max(x, y))),
+									  for y in range(300)
+									  for s in range(1, 301-max(x, y))),
 						   key=lambda c: grid_power(sat, *c))
 	
 	return (maxx+1, maxy+1, maxs)

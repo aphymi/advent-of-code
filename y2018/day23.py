@@ -1,14 +1,7 @@
-import re
 import z3
 
-
-def preprocess_input(lines):
-	nanobots = []
-	for line in lines:
-		nanobots.append(list(map(int, re.findall("-?\d+", line))))
-		nanobots[-1] = (nanobots[-1][:3], nanobots[-1][3])
-	
-	return nanobots
+from util.parse import *
+parse_input = compose(map_func(lambda l: (l[:3], l[3])), get_ints)
 
 
 def m_dist(pos1, pos2):
@@ -38,7 +31,7 @@ def part2(nanobots):
 	# Get the one closest to 0, 0, 0.
 	optimiser.minimize(z3_mdist(cand, (0, 0, 0)))
 	
-	print(optimiser.check())
+	optimiser.check()
 	
 	model = optimiser.model()
 	

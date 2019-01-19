@@ -1,4 +1,4 @@
-def preprocess_input(lines):
+def parse_input(lines):
 	init = set(i for i, plant in enumerate(lines[0][15:]) if plant == "#")
 		
 	rules = {}

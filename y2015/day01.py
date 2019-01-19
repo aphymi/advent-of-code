@@ -1,5 +1,5 @@
-def preprocess_input(lines):
-	return lines[0]
+from util.parse import *
+parse_input = single_line
 
 def part1(parens):
 	return parens.count("(") - parens.count(")")

@@ -1,4 +1,4 @@
-def preprocess_input(lines):
+def parse_input(lines):
 	tracks = [list(line) for line in lines]
 	
 	carts = {}

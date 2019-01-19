@@ -1,14 +1,12 @@
 from math import ceil, sqrt
 
-def preprocess_input(lines):
+def parse_input(lines):
+	ipr = int(lines[0][4:])
+	
 	insts = []
-	ipr = None
-	for line in lines:
-		if line.startswith("#"):
-			ipr = int(line[4])
-		else:
-			s = line.split()
-			insts.append((s[0], list(map(int, s[1:]))))
+	for line in lines[1:]:
+		s = line.split()
+		insts.append((s[0], [int(n) for n in s[1:]]))
 	
 	return (ipr, insts)
 

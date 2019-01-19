@@ -1,16 +1,17 @@
-import re
+from util.parse import *
 
-def preprocess_input(lines):
-	line_re = re.compile("#(?P<id>\d+) @ (?P<w_offset>\d+),(?P<h_offset>\d+): (?P<width>\d+)x(?P<height>\d+)")
-	
-	claims = [{k:int(v) for k,v in line_re.match(line).groupdict().items()}
-						for line in lines]
-	
-	for claim in claims:
-		claim["w_end"] = claim["w_offset"] + claim["width"]
-		claim["h_end"] = claim["h_offset"] + claim["height"]
-	
-	return claims
+def to_dict(line):
+	return {
+		"id": line[0],
+		"w_offset": line[1],
+		"h_offset": line[2],
+		"width": line[3],
+		"height": line[4],
+		"w_end": line[1] + line[3],
+		"h_end": line[2] + line[4],
+	}
+
+parse_input = compose(map_func(to_dict), get_ints)
 
 def part1(claims):
 	existing = set()

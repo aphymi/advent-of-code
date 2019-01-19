@@ -1,15 +1,16 @@
-import re
 import time
+
+from util.parse import *
 
 # I find the simulation really pretty, so I'm saving this as an option to
 #   watch the water flow vs just get the answer.
 watch = False
 
-def preprocess_input(lines):
+def generate_clay(lines):
 	clay = set()
-	for line in lines:
-		a, b, c = map(int, re.findall("\d+", line))
-		if line[0] == "x":
+	for dim, coords in lines:
+		a, b, c = coords
+		if dim == "x":
 			for y in range(b, c+1):
 				clay.add((a, y))
 		else:
@@ -17,6 +18,8 @@ def preprocess_input(lines):
 				clay.add((x, a))
 	
 	return clay
+
+parse_input = compose(generate_clay, parallel(map_func(lambda l: l[0]), get_ints))
 
 def printmap(clay, water, x, y):
 	miny = max(0, y-10)

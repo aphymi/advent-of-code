@@ -1,5 +1,5 @@
-def preprocess_input(lines):
-	return list(map(int, lines))
+from util.parse import *
+parse_input = map_func(int)
 
 def part1(freqs):
 	return sum(freqs)

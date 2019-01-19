@@ -1,6 +1,6 @@
 import numpy as np
 
-def preprocess_input(lines):
+def parse_input(lines):
 	rules = {}
 	for line in lines:
 		inp, out = line.split(" -> ")

@@ -1,7 +1,5 @@
-import time
-
-def preprocess_input(lines):
-	return [list(line) for line in lines]
+from util.parse import *
+parse_input = map_func(list)
 
 def adj(cur_map, x, y):
 	return [cur_map[y+ym][x+xm] for xm in (-1, 0, 1)

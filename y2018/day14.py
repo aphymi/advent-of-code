@@ -1,5 +1,5 @@
-def preprocess_input(lines):
-	return lines[0]
+from util.parse import *
+parse_input = single_line
 
 def sim(recs, fst, snd):
 	for c in str(recs[fst] + recs[snd]):
@@ -21,7 +21,6 @@ def part1(num_recs):
 
 def part2(recs_subs):
 	recs_subs = list(int(c) for c in recs_subs)
-	print(recs_subs)
 	recs = [3, 7]
 	fst = 0
 	snd = 1
@@ -29,7 +28,6 @@ def part2(recs_subs):
 	while recs_subs not in (recs[-len(recs_subs):], recs[-len(recs_subs)-1:-1]):
 		fst, snd = sim(recs, fst, snd)
 	
-	print(recs[-10:])
 	if recs_subs == recs[-len(recs_subs):]:
 		return len(recs) - len(recs_subs)
 	else:

@@ -1,8 +1,7 @@
 from copy import deepcopy
 import re
-import time
 
-def preprocess_input(lines):
+def parse_input(lines):
 	groups = []
 	g = ""
 	for line in lines:

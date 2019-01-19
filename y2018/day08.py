@@ -1,15 +1,14 @@
-def preprocess_input(lines):
-	nums = list(map(int, reversed(lines[0].split())))
-	
-	def build_nodes():
-		num_children = nums.pop()
-		num_meta = nums.pop()
-		return {
-			"children": [build_nodes() for _ in range(num_children)],
-			"meta": [nums.pop() for _ in range(num_meta)]
-		}
-	
-	return build_nodes()
+from util.parse import *
+
+def build_nodes(nums):
+	num_children = nums.pop()
+	num_meta = nums.pop()
+	return {
+		"children": [build_nodes(nums) for _ in range(num_children)],
+		"meta": [nums.pop() for _ in range(num_meta)]
+	}
+
+parse_input = compose(build_nodes, list, reversed, single_line, get_ints)
 
 def part1(root):
 	def sums(node):

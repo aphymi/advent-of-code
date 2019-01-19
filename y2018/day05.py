@@ -1,9 +1,8 @@
 from functools import reduce
 from string import ascii_lowercase
 
-def preprocess_input(lines):
-	# Only one line
-	return lines[0]
+from util.parse import *
+parse_input = single_line
 
 def react(units):
 	def app_ret(lst, elem):

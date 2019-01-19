@@ -1,7 +1,7 @@
 from collections import defaultdict, deque
 import re
 
-def preprocess_input(lines):
+def parse_input(lines):
 	return construct_rooms(lines[0][1:-1])
 
 def follow_dir(adj_rooms, x, y, direc):

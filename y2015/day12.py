@@ -1,7 +1,7 @@
 import json
 import re
 
-def preprocess_input(lines):
+def parse_input(lines):
 	return "".join(lines)
 
 def part1(doc):

@@ -1,7 +1,7 @@
 from collections import deque
 
-def preprocess_input(lines):
-	return [list(line) for line in lines]
+from util.parse import *
+parse_input = map_func(list)
 
 def get_unit_by_pos(units, y, x):
 	for unit in units:

@@ -1,8 +1,7 @@
 from hashlib import md5
 
-def preprocess_input(lines):
-	return lines[0]
-
+from util.parse import *
+parse_input = single_line
 
 def valid_lead(inp, lead):
 	h = md5()

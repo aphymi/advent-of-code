@@ -1,13 +1,13 @@
 from itertools import permutations
 
-def preprocess_input(lines):
-	dists = {}
-	for line in lines:
-		line = line.split()
-		dists[(line[0], line[2])] = int(line[4])
-		dists[(line[2], line[0])] = int(line[4])
-		
+from util.parse import *
+
+def bidirect(lines):
+	dists = {(line[0], line[2]): int(line[4]) for line in lines}
+	dists.update({(line[2], line[0]): int(line[4]) for line in lines})
 	return dists
+
+parse_input = compose(bidirect, split)
 
 def part1(dists):
 	def shortest_route_from(rts, start): # Greedy!

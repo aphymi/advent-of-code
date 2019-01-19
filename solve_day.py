@@ -75,8 +75,8 @@ if __name__ == "__main__":
 	
 	parts_to_eval = ("1", "2") if args.part is None else (args.part,)
 
-	if hasattr(day_mod, "preprocess_input"):
-		lines = day_mod.preprocess_input(lines)
+	if hasattr(day_mod, "parse_input"):
+		lines = day_mod.parse_input(lines)
 	
 	for part in parts_to_eval:
 		part_name = "part" + part

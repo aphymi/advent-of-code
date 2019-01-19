@@ -1,17 +1,21 @@
-def preprocess_input(lines):
+from util.parse import *
+
+
+def separate_insts(int_lines):
 	samples = []
-	cl = 0
-	while lines[cl]:
-		samples.append((
-			[int(c) for c in lines[cl][9:-1].split(", ")],
-			[int(c) for c in lines[cl+1].split(" ")],
-			[int(c) for c in lines[cl+2][9:-1].split(", ")],
-		))
-		cl += 4
 	
-	insts = [list(map(int, line.split(" "))) for line in lines[cl+2:]]
+	for ln in range(0, len(int_lines), 4):
+		if not int_lines[ln]:
+			break
+		
+		samples.append((int_lines[ln], int_lines[ln + 1], int_lines[ln + 2]))
+	
+	insts = int_lines[ln + 2:]
 	
 	return (samples, insts)
+
+
+parse_input = compose(separate_insts, get_ints)
 
 # I didn't want to put these all out specifically. I really didn't.
 # I tried to use lambda functions in a for loop, but apparently

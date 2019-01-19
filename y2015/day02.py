@@ -1,11 +1,5 @@
-import re
-
-def preprocess_input(lines):
-	dims = []
-	for line in lines:
-		dims.append(list(map(int, re.findall("\d+", line))))
-	
-	return dims
+from util.parse import *
+parse_input = get_ints
 
 def part1(dims):
 	def paper(dim):

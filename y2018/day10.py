@@ -1,11 +1,5 @@
-import re
-
-def preprocess_input(lines):
-	lights = []
-	for line in lines:
-		lights.append(list(map(int, re.findall("-?\d+", line))))
-	
-	return lights
+from util.parse import *
+parse_input = get_ints
 
 def minmax_poses(poses):
 	minx = miny = float("inf")
@@ -20,7 +14,7 @@ def minmax_poses(poses):
 
 _msg_t = []
 def find_msg_t(lights):
-	# The solution should be cached, since this is a lot of work.
+	# Cache the solution, since this is a lot of work.
 	if _msg_t:
 		return _msg_t[0]
 	
@@ -28,24 +22,24 @@ def find_msg_t(lights):
 	poses = [[px, py] for px, py, vx, vy in lights]
 	vels = [(vx, vy) for px, py, vx, vy in lights]
 	
-	min_area = float("inf")
-	min_t = -1
-	# Assume that it happens in the first eleven-thousand seconds.
-	for t in range(11000):
+	t = -1
+	last_area = float("inf")
+	while True:
+		t += 1
 		minx, maxx, miny, maxy = minmax_poses(poses)
 		
-		# Assume that the smallest-area hull is the message.
+		# Assume that the last second in which the bounding box decreases in size is the right second.
 		area = (maxx-minx) * (maxy-miny)
-		if area < min_area:
-			min_area = area
-			min_t = t
+		if area > last_area:
+			break
+		last_area = area
 	
 		for i in range(len(poses)):
 			poses[i][0] += vels[i][0]
 			poses[i][1] += vels[i][1]
 	
-	_msg_t.append(min_t)
-	return min_t
+	_msg_t.append(t-1)
+	return t - 1
 	
 def part1(lights):
 	msg_t = find_msg_t(lights)

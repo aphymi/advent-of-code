@@ -1,7 +1,8 @@
 import re
 
-def preprocess_input(lines):
-	return list(lines[0])
+from util.parse import *
+
+parse_input = compose(list, single_line)
 
 def increment_pass(psswd):
 	for i in range(len(psswd)-1, -1, -1):
@@ -16,7 +17,6 @@ def part1(psswd):
 			and re.match(r"[^iol]+", "".join(pss)) \
 			and re.match(r".*(.)\1.*(.)\2.*", "".join(pss))
 	
-	psswd = list(psswd)
 	while not passes(psswd):
 		increment_pass(psswd)
 	
@@ -25,5 +25,5 @@ def part1(psswd):
 def part2(psswd):
 	psswd = list(part1(psswd))
 	increment_pass(psswd)
-	return part1("".join(psswd))
+	return part1(psswd)
 

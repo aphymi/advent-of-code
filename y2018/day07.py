@@ -1,18 +1,16 @@
-import re
+from util.parse import *
 
-def preprocess_input(lines):
+def assemble(lines):
 	steps = {}
-	
-	for line in lines:
-		fst, snd = re.findall(" [A-Z] ", line)
-		fst, snd = fst.strip(), snd.strip()
+	for fst, snd in lines:
 		if fst not in steps:
 			steps[fst] = []
 		if snd not in steps:
 			steps[snd] = []
 		steps[fst].append(snd)
-	
 	return steps
+
+parse_input = compose(assemble, get_regex_matches(r"\b[A-Z]\b"))
 
 def readys(steps, dones):
 	# Filter out all the steps that are done.

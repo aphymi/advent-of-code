@@ -1,5 +1,5 @@
-def preprocess_input(lines):
-	return lines[0]
+from util.parse import *
+parse_input = single_line
 
 def say(look):
 	said = [[look[0], 1]]

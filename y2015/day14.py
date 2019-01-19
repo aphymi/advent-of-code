@@ -1,13 +1,13 @@
 from collections import defaultdict
-import re
+
+from util.parse import *
+parse_lines = compose(dictify, parallel(map_func(lambda l: l[:l.index(" ")]), get_ints))
 
 def preprocess_input(lines):
 	deer = {}
 	for line in lines:
-		# Deer can fly 3 km/s for 6 seconds, but then must rest for -2 seconds.
 		deer[line[:line.index(" ")]] = tuple(map(int, re.findall(r"\d+", line)))
 	
-	print(deer)
 	return deer
 
 def distance(deerinfo, time):

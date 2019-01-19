@@ -1,8 +1,7 @@
 from collections import deque
-import re
 
-def preprocess_input(lines):
-	return list(map(int, re.findall("\d+", lines[0])))
+from util.parse import *
+parse_input = compose(single_line, get_ints)
 
 def max_marble_score(num_players, last_marble):
 	player_scores = [0]*num_players

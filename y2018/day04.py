@@ -1,6 +1,6 @@
-def preprocess_input(lines):
-	lines.sort()
-	
+from util.parse import *
+
+def get_logs(lines):
 	logs = {}
 	last_sl_start = None
 	last_guard = None
@@ -22,6 +22,8 @@ def preprocess_input(lines):
 			logs[last_guard].append((last_sl_start, minute))
 	
 	return logs
+
+parse_input = compose(get_logs, sorted)
 
 def part1(logs):
 	guard = max(logs.items(), key=lambda t: sum([b-a for a, b in t[1]]))[0]
