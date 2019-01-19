@@ -1,14 +1,7 @@
 from collections import defaultdict
 
 from util.parse import *
-parse_lines = compose(dictify, parallel(map_func(lambda l: l[:l.index(" ")]), get_ints))
-
-def preprocess_input(lines):
-	deer = {}
-	for line in lines:
-		deer[line[:line.index(" ")]] = tuple(map(int, re.findall(r"\d+", line)))
-	
-	return deer
+parse_input = compose(dict, parallel(map_func(lambda l: l[:l.index(" ")]), get_ints))
 
 def distance(deerinfo, time):
 	speed, dur, rest = deerinfo

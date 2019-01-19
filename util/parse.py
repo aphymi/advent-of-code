@@ -45,6 +45,3 @@ def get_ints(lines):
 
 def get_pos_ints(lines):
 	return [[int(m) for m in line] for line in get_regex_matches(r"\d+")(lines)]
-
-def dictify(inp):
-	return {k: v for k, v in inp}
