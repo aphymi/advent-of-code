@@ -52,6 +52,9 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="Solve a day of the advent of code.")
 	parser.add_argument("day", type=int,
 						help="which day to solve the problem for")
+	parser.add_argument("-t", "--test", dest="testing",
+						action="store_const", const=True, default=False,
+						help="read input from the test file .test")
 	parser.add_argument("--part", "-p", dest="part", default=None, choices=("1", "2"),
 						help="the particular part to solve, instead of both")
 	years = [dirname[1:] for dirname in os.listdir(".") if dirname.startswith("y")]
@@ -71,7 +74,12 @@ if __name__ == "__main__":
 		print("Error: No solution module found for {}-{}.".format(yname(args.year), dname(args.day)))
 		sys.exit(1)
 	
-	lines = retrieve_input(args.year, args.day)
+	if args.testing:
+		with open(".test") as file:
+			lines = file.readlines()
+	
+	else:
+		lines = retrieve_input(args.year, args.day)
 	
 	parts_to_eval = ("1", "2") if args.part is None else (args.part,)
 

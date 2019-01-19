@@ -6,3 +6,6 @@ __pycache__/
 
 # AoC Session cookie; definitely do *not* want to commit.
 .session
+
+# No need to commit test inputs.
+.test
