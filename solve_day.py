@@ -76,7 +76,7 @@ if __name__ == "__main__":
 	
 	if args.testing:
 		with open(".test") as file:
-			lines = file.readlines()
+			lines = file.read().splitlines()
 	
 	else:
 		lines = retrieve_input(args.year, args.day)
