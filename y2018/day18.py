@@ -1,59 +1,56 @@
+from util.gol import GameOfLife
 from util.parse import *
 parse_input = map_func(list)
 
-def adj(cur_map, x, y):
-	return [cur_map[y+ym][x+xm] for xm in (-1, 0, 1)
-								for ym in (-1, 0, 1)
-							if (xm, ym) != (0, 0) and
-							   0 <= y+ym < len(cur_map) and
-							   0 <= x+xm < len(cur_map[y+ym])]
 
-def step(cur_map):
-	new_map = []
-	for y, row in enumerate(cur_map):
-		new_map.append([])
-		for x, space in enumerate(row):
-			adjac = adj(cur_map, x, y)
-			if space == ".":
-				new_map[-1].append("|" if adjac.count("|") >= 3 else ".")
-			
-			elif space == "|":
-				new_map[-1].append("#" if adjac.count("#") >= 3 else "|")
-
-			else:
-				new_map[-1].append("#" if "|" in adjac and "#" in adjac else ".")
-	
-	return new_map
-
-def value(cur_map):
-	return sum(row.count("|") for row in cur_map) * sum(row.count("#") for row in cur_map)
+class LumberYard(GameOfLife):
+	def new_value(self, x, y, cur):
+		adj = self.adj8(x, y)
 		
+		if cur == ".":
+			return "|" if adj.count("|") >= 3 else "."
+		
+		elif cur == "|":
+			return "#" if adj.count("#") >= 3 else "|"
+		
+		else: # cur == "#"
+			return "#" if "|" in adj and "#" in adj else "."
+	
+	def score(self):
+		return sum(row.count("|") for row in self.state) * sum(row.count("#") for row in self.state)
+	
+	def visualise(self):
+		return "\n".join(" ".join(row) for row in self.state)
 
 def part1(cur_map):
-	for _ in range(10):
-		cur_map = step(cur_map)
+	yard = LumberYard(cur_map)
+	yard.stepN(10)
 	
-	return value(cur_map)
+	return yard.score()
 
 def part2(cur_map):
-	# Look for a state we see twice in a row.
+	yard = LumberYard(cur_map)
+	
 	seen = set()
 	cycle = []
-	t = 0
+	# Look for a state we see twice in a row.
 	while True:
-		cur_map = step(cur_map)
+		yard.step()
+		
 		if cycle:
-			if cur_map == cycle[0]:
+			if yard.state == cycle[0]: # Gotten back to the start of the cycle.
 				break
-			cycle.append(cur_map)
+			cycle.append(yard.state)
+			
 		else:
-			tup = tuple(tuple(row) for row in cur_map)
+			tup = tuple(tuple(row) for row in yard.state)
+			
 			if tup in seen:
-				cycle.append(cur_map)
+				cycle.append(yard.state)
+				
 			else:
 				seen.add(tup)
-		t += 1
 
-	final_map = cycle[(1000000000 - 1 - t) % len(cycle)]
-	return value(final_map)
+	yard.state = cycle[(1000000000 - yard.t) % len(cycle)]
+	return yard.score()
 
