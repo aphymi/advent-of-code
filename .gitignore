@@ -1,8 +1,8 @@
 # Byte-compiled Python files
 __pycache__/
 
-# IDE files
-.idea/
+# Editor files
+.vscode/
 
 # AoC Session cookie; definitely do *not* want to commit.
 .session
