@@ -5,16 +5,24 @@ from util.parse import *
 
 parse_input = split_on(",")
 
-def trace_paths(paths) -> Set[Tuple[int, int]]:
+WirePath: List[str]
+WirePaths = List[WirePath]
+Point = Tuple[int, int]
+
+def trace_paths(path: WirePath) -> Set[Point]:
+	"""
+	Return a set of all points that the given wire path visits.
+	"""
+	
 	points = set()
 	
 	pos = (0, 0)
 	
-	for path in paths:
-		direction = path[0]
-		steps = int(path[1:])
+	for run in path:
+		direction = run[0]
+		run_length = int(run[1:])
 		
-		for _ in range(steps):
+		for _ in range(run_length):
 			if direction == "R":
 				pos = (pos[0]+1, pos[1])
 			elif direction == "L":
@@ -28,21 +36,29 @@ def trace_paths(paths) -> Set[Tuple[int, int]]:
 	
 	return points
 	
-def get_combined_steps(wire_paths, intersections) -> Dict[Tuple[int, int], int]:
+def get_combined_steps(
+		wire_paths: WirePaths,
+		intersections: Set[Point],
+		) -> Dict[Point, int]:
+	"""
+	Return a dictionary mapping from intersection points to the sum of the
+	lengths of each wire it takes to get to that point from the origin.
+	"""
+	
 	comb_steps = defaultdict(int)
 	
 	for wire_path in wire_paths:
 		pos = (0, 0)
-		path_steps = 0
+		running_path_len = 0
 		
 		visited = set()
 		
 		for leg in wire_path:
 			direction = leg[0]
-			steps = int(leg[1:])
+			run_length = int(leg[1:])
 			
-			for _ in range(steps):
-				path_steps += 1
+			for _ in range(run_length):
+				running_path_len += 1
 				if direction == "R":
 					pos = (pos[0]+1, pos[1])
 				elif direction == "L":
@@ -54,11 +70,11 @@ def get_combined_steps(wire_paths, intersections) -> Dict[Tuple[int, int], int]:
 				
 				if pos in intersections and pos not in visited:
 					visited.add(pos)
-					comb_steps[pos] += path_steps
+					comb_steps[pos] += running_path_len
 	
 	return comb_steps
 
-def part1(wire_paths: List[List[str]]) -> int:
+def part1(wire_paths: WirePaths) -> int:
 	intersections = (
 		trace_paths(wire_paths[0])
 		.intersection(trace_paths(wire_paths[1]))
@@ -69,7 +85,7 @@ def part1(wire_paths: List[List[str]]) -> int:
 		for i in intersections
 	)
 
-def part2(wire_paths) -> int:
+def part2(wire_paths: WirePaths) -> int:
 	intersections = (
 		trace_paths(wire_paths[0])
 		.intersection(trace_paths(wire_paths[1]))
