@@ -8,4 +8,4 @@ __pycache__/
 .session
 
 # No need to commit test inputs.
-.test
+test_input.txt
