@@ -3,7 +3,7 @@ from y2019 import intcode
 
 parse_input = compose(single_line, get_ints)
 
-def part1(program):
+def part1(program: intcode.IntcodeProgram) -> int:
 	program = program[:] # Make a copy.
 	program[1] = 12
 	program[2] = 2
@@ -12,7 +12,7 @@ def part1(program):
 	
 	return program[0]
 
-def part2(program):
+def part2(program: intcode.IntcodeProgram) -> int:
 	
 	for i in range(0, 100):
 		for j in range(0, 100):
