@@ -5,7 +5,7 @@ from util.parse import *
 
 parse_input = split_on(",")
 
-WirePath: List[str]
+WirePath = List[str]
 WirePaths = List[WirePath]
 Point = Tuple[int, int]
 
