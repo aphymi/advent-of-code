@@ -1,7 +1,14 @@
 from collections import defaultdict
 
 from util.parse import *
-parse_input = compose(dict, parallel(map_func(lambda l: l[:l.index(" ")]), get_ints))
+
+parse_input = compose(
+	parallel(
+		map_func(lambda l: l[:l.index(" ")]),
+		get_ints,
+	),
+	dict,
+)
 
 def distance(deerinfo, time):
 	speed, dur, rest = deerinfo

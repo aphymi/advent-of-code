@@ -1,7 +1,7 @@
 from collections import deque
 
 from util.parse import *
-parse_input = compose(single_line, get_ints)
+parse_input = compose(get_ints, single_line)
 
 def max_marble_score(num_players, last_marble):
 	player_scores = [0]*num_players

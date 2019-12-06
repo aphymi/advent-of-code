@@ -2,7 +2,7 @@ from typing import Tuple
 
 from util.parse import *
 
-parse_input = compose(tuple, single_line, get_pos_ints)
+parse_input = compose(get_pos_ints, single_line, tuple)
 
 Range = Tuple[int, int]
 

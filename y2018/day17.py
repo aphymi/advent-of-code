@@ -19,7 +19,13 @@ def generate_clay(lines):
 	
 	return clay
 
-parse_input = compose(generate_clay, parallel(map_func(lambda l: l[0]), get_ints))
+parse_input = compose(
+	parallel(
+		map_func(lambda l: l[0]),
+		get_ints,
+	),
+	generate_clay,
+)
 
 def printmap(clay, water, x, y):
 	miny = max(0, y-10)

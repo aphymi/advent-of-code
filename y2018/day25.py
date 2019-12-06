@@ -1,6 +1,6 @@
 from util.parse import *
 
-parse_input = compose(map_func(tuple), get_ints)
+parse_input = compose(get_ints, map_func(tuple))
 
 def m_dist(pos1, pos2):
 	return sum(abs(c1 - c2) for c1, c2 in zip(pos1, pos2))

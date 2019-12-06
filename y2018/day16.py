@@ -15,7 +15,7 @@ def separate_insts(int_lines):
 	return (samples, insts)
 
 
-parse_input = compose(separate_insts, get_ints)
+parse_input = compose(get_ints, separate_insts)
 
 # I didn't want to put these all out specifically. I really didn't.
 # I tried to use lambda functions in a for loop, but apparently

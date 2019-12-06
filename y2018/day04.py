@@ -23,7 +23,7 @@ def get_logs(lines):
 	
 	return logs
 
-parse_input = compose(get_logs, sorted)
+parse_input = compose(sorted, get_logs)
 
 def part1(logs):
 	guard = max(logs.items(), key=lambda t: sum([b-a for a, b in t[1]]))[0]

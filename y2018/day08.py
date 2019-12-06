@@ -8,7 +8,13 @@ def build_nodes(nums):
 		"meta": [nums.pop() for _ in range(num_meta)]
 	}
 
-parse_input = compose(build_nodes, list, reversed, single_line, get_ints)
+parse_input = compose(
+	get_ints,
+	single_line,
+	reversed,
+	list,
+	build_nodes,
+)
 
 def part1(root):
 	def sums(node):

@@ -24,7 +24,11 @@ def get_minmaxes(coords):
 	
 	return minmaxs
 
-parse_input = compose(lambda cs: (cs, get_minmaxes(cs)), map_func(tuple), get_ints)
+parse_input = compose(
+	get_ints,
+	map_func(tuple),
+	lambda cs: (cs, get_minmaxes(cs)),
+)
 
 
 def mdistance(x1, y1, x2, y2):

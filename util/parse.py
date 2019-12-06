@@ -1,8 +1,6 @@
 import re
 
 def compose(*ops):
-	ops = reversed(ops)
-	
 	def composed(inp):
 		for op in ops:
 			inp = op(inp)

@@ -7,7 +7,7 @@ def bidirect(lines):
 	dists.update({(line[2], line[0]): int(line[4]) for line in lines})
 	return dists
 
-parse_input = compose(bidirect, split)
+parse_input = compose(split, bidirect)
 
 def part1(dists):
 	def shortest_route_from(rts, start): # Greedy!

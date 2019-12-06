@@ -1,7 +1,10 @@
 import heapq
 
 from util.parse import *
-parse_input = compose(lambda inp: (inp[0][0], tuple(inp[1])), get_ints)
+parse_input = compose(
+	lambda inp: (inp[0][0], tuple(inp[1])),
+	get_ints,
+)
 
 def around(x, y):
 	return [(x+xm, y+ym) for xm, ym in ((0, 1), (0, -1), (1, 0), (-1, 0)) if 0 <= (y+ym) and 0 <= (x+xm)]

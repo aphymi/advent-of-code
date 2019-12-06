@@ -11,7 +11,7 @@ def to_dict(line):
 		"h_end": line[2] + line[4],
 	}
 
-parse_input = compose(map_func(to_dict), get_ints)
+parse_input = compose(get_ints, map_func(to_dict))
 
 def part1(claims):
 	existing = set()

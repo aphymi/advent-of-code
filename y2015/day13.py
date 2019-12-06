@@ -10,7 +10,7 @@ def make_prefs(spl_lines):
 	
 	return prefs
 	
-parse_input = compose(make_prefs, split)
+parse_input = compose(split, make_prefs)
 
 def score(prefs, arrange):
 	return sum(prefs[(a1, a2)] + prefs[(a2, a1)] for a1, a2 in zip(arrange[:-1], arrange[1:])) + \

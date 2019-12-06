@@ -10,7 +10,7 @@ def assemble(lines):
 		steps[fst].append(snd)
 	return steps
 
-parse_input = compose(assemble, get_regex_matches(r"\b[A-Z]\b"))
+parse_input = compose(get_regex_matches(r"\b[A-Z]\b"), assemble)
 
 def readys(steps, dones):
 	# Filter out all the steps that are done.

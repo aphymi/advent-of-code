@@ -1,7 +1,10 @@
 import z3
 
 from util.parse import *
-parse_input = compose(map_func(lambda l: (l[:3], l[3])), get_ints)
+parse_input = compose(
+	get_ints,
+	map_func(lambda l: (l[:3], l[3])),
+)
 
 
 def m_dist(pos1, pos2):

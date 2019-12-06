@@ -2,7 +2,7 @@ import re
 
 from util.parse import *
 
-parse_input = compose(list, single_line)
+parse_input = compose(single_line, list)
 
 def increment_pass(psswd):
 	for i in range(len(psswd)-1, -1, -1):

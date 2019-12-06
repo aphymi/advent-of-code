@@ -17,7 +17,7 @@ def gen_sat(serial):
 	
 	return sat
 
-parse_input = compose(gen_sat, int, single_line)
+parse_input = compose(single_line, int, gen_sat)
 
 def grid_power(sat, x, y, size):
 	a = sat[x-1][y-1] if x > 0 and y > 0 else 0

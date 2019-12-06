@@ -4,13 +4,18 @@ import networkx as nx
 
 from util.parse import *
 
-# Convert input to a list of 2-tuple edges, then use them as edge input to a
-# 	DiGraph.
 parse_input = compose(
-	nx.DiGraph,
-	map_func(tuple),
-	split_on(")"),
+	# Get rid of trailing newlines.
 	map_func(lambda l: l.strip()),
+	
+	# Separate the names of the orbital bodies.
+	split_on(")"),
+	
+	# Convert the 2-item lists into 2-tuples.
+	map_func(tuple),
+	
+	# Make a directed graph, using the orbit list for edges.
+	nx.DiGraph,
 )
 
 OrbitGraph = nx.DiGraph
