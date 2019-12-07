@@ -4,7 +4,8 @@ challenge input files, originally formatted as a list of strings, one for each
 line in the input.
 """
 
-from typing import Callable, Iterable, List, Sequence, Tuple, TypeVar, Union
+from typing import (Callable, Iterable, List, Pattern, Sequence, Tuple, TypeVar,
+	Union)
 import re
 
 def compose(*functions: Callable) -> Callable:
@@ -96,7 +97,7 @@ def single_line(lines: Sequence[T]) -> T:
 	return lines[0]
 
 def get_regex_matches(
-		regex: Union[str, re.Pattern],
+		regex: Union[str, Pattern],
 		) -> Callable[[Iterable[str]], List[List[str]]]:
 	"""
 	Return a function that finds all regex matches on each line of its input.
