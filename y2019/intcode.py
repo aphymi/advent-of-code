@@ -1,89 +1,186 @@
+import collections
 import inspect
-from typing import Callable, Dict, List, Tuple, Union
+from typing import Callable, Deque, Iterable, List, Tuple, Union
 
+# Type aliases
 IntcodeProgram = List[int]
+WriteAddrReturn = Tuple[int, int]
+OutReturn = None
+JumpReturn = int
+OpFuncReturn = Union[WriteAddrReturn, OutReturn, JumpReturn]
 
-opcodes: Dict[int, Callable[..., Union[Tuple[int, int], None]]] = {
-	1: lambda arg1, arg2, out_addr: (out_addr, arg1+arg2),
-	
-	2: lambda arg1, arg2, out_addr: (out_addr, arg1*arg2),
-	
-	3: lambda write_addr: (write_addr, int(input("In: "))),
-	
-	4: lambda arg1: print(f"Out: {arg1}"),
-	
-	5: lambda jump, new_pc: new_pc if jump else None,
-	
-	6: lambda no_jump, new_pc: None if no_jump else new_pc,
-	
-	7: lambda arg1, arg2, write_addr: (write_addr, int(arg1 < arg2)),
-	
-	8: lambda arg1, arg2, write_addr: (write_addr, int(arg1 == arg2)),
-}
-
-# A list of opcodes for whom the last parameter is a write address, and so
-# 	should be treated as an immediate for the purpose of value-finding,
-# 	regardless of specified mode.
+# A set of opcodes for which the last parameter should always be treated as an
+# 	immediate
 last_param_immediate = set(range(1, 9)).difference({4, 5, 6})
 
-# Opcodes whose first return value is a new pc, rather than a write address.
-jumps = set((
-	5,
-	6,
-))
+def run_program_to_completion(
+		program: IntcodeProgram,
+		inputs: Iterable[int] = None,
+		) -> List[int]:
+	"""
+	Run an intcode program in-place to completion, returning the execution's
+	outputs.
+	"""
+	
+	executor = IntcodeExecutor(program, inputs)
+	executor.run_to_completion()
+	return executor.outputs
 
-def run_program_to_completion(prog: IntcodeProgram) -> None:
-	"""
-	Run an intcode program to completion.
-	"""
+class IntcodeExecutor:
+	program: IntcodeProgram
+	inputs: Deque[int]
+	pc: int
 	
-	pc = 0
+	outputs: List[int]
 	
-	while True:
-		op = prog[pc]
-		opcode = op % 100
+	def __init__(
+			self,
+			program: IntcodeProgram, 
+			inputs: Iterable[int] = None,
+			) -> None:
+		self.program = program
+		self.inputs = collections.deque(inputs or [])
+		self.pc = 0
 		
-		if opcode == 99:
-			break
+		self.outputs = []
+	
+	def run_to_completion(self) -> None:
+		"""
+		Run the intcode program until it hits an opcode of 99.
+		"""
 		
+		# TODO Exception-based intcode program finishing.
+		while self.program[self.pc] != 99:
+			self.step()
+	
+	def step(self) -> None:
+		"""
+		Execute a single instruction of the intcode program.
+		
+		Returns: the output of the executed instruction, if any.
+		"""
+		
+		cur_op = self.program[self.pc]
+		
+		opcode = cur_op % 100
 		arg_modes = [
 			int(mode)
-			for mode in reversed(str(op // 100))
+			for mode in reversed(str(cur_op // 100))
 		]
+		args = self.get_op_args(opcode, arg_modes)
 		
-		op_func = opcodes[opcode]
-		op_arity = len(inspect.getargspec(op_func).args)
+		op_func = self.get_opcode_func(opcode)
+		op_arity = self.get_opcode_arity(opcode)
 		
-		# Pad the arg_mode list until it's length is the same as the op arity.
-		arg_modes += [0] * (op_arity - len(arg_modes))
+		# Increment the pc prior to running the function, so that jump ops may
+		# 	modify it if necessary.
+		self.pc += op_arity + 1
 		
-		if opcode in last_param_immediate:
-			# Set the last mode to immediate.
-			arg_modes[-1] = 1
+		op_return_val = op_func(*args)
+		if op_return_val is not None:
+			self.outputs.append(op_return_val)
 		
-		args = []
-		for arg, mode in zip(prog[pc+1:pc+op_arity+1], arg_modes):
-			arg_value: int
-			if mode == 0: # Position mode
-				arg_value = prog[arg]
-				
-			elif mode == 1: # Immediate mode
-				arg_value = arg
+	
+	def get_op_args(
+			self,
+			opcode: int,
+			arg_modes: int
+			) -> List[int]:
+			
+		op_arity = self.get_opcode_arity(opcode)
+		processed_args = []
+		
+		raw_args = self.program[self.pc + 1: self.pc + op_arity + 1]
+		
+		for index, raw_arg in enumerate(raw_args):
+			arg_mode: int
+			if index == (op_arity - 1) and opcode in last_param_immediate:
+				arg_mode = 1
+			elif index >= len(arg_modes):
+				arg_mode = 0
+			else:
+				arg_mode = arg_modes[index]
+			
+			if arg_mode == 0:
+				processed_args.append(self.program[raw_arg])
+			
+			elif arg_mode == 1:
+				processed_args.append(raw_arg)
 			
 			else:
-				raise Exception(f"Unknown argument mode: {mode}")
-			
-			args.append(arg_value)
+				raise Exception(
+					f"Unknown argument mode in intcode program: {arg_mode}"
+				)
 		
-		returned = op_func(*args)
-		if returned is None:
-			# Just printed something out.
-			pc += op_arity + 1
+		return processed_args
+	
+	
+	def get_opcode_func(self, opcode: int) -> Callable[..., OpFuncReturn]:
+		return getattr(self, f"op{opcode}")
+	
+	def get_opcode_arity(self, opcode: int) -> int:
+		# Get the full number of args, then subtract one to account for 'self'.
+		return len(
+			inspect.getfullargspec(self.get_opcode_func(opcode)).args
+		) - 1
+	
+	def op1(self, arg1: int, arg2: int, write_addr: int) -> None:
+		"""
+		Add two numbers together.
+		"""
 		
-		elif opcode in jumps:
-			pc = returned
+		self.program[write_addr] = arg1 + arg2
+
+	def op2(self, arg1: int, arg2: int, write_addr: int) -> None:
+		"""
+		Multiply two numbers together.
+		"""
 		
-		else:
-			# Write the second value of the tuple at the first value.
-			prog[returned[0]] = returned[1]
-			pc += op_arity + 1
+		self.program[write_addr] = arg1 * arg2
+	
+	def op3(self, write_addr: int) -> None:
+		"""
+		Pop an input from the input list and write it to the specified addr.
+		"""
+		
+		if len(self.inputs) == 0:
+			raise Exception("Attempted intcode input, but input list is empty.")
+		
+		self.program[write_addr] = self.inputs.popleft()
+	
+	def op4(self, arg: int) -> int:
+		"""
+		Return the given value. Equivalent to an echo.
+		"""
+		
+		return arg
+	
+	def op5(self, do_jump: int, new_pc: int) -> None:
+		"""
+		Set the pc to the given value if do_jump is nonzero.
+		"""
+		
+		if do_jump != 0:
+			self.pc = new_pc
+	
+	def op6(self, do_not_jump: int, new_pc: int) -> None:
+		"""
+		Set the pc to the given value if do_not_jump is nonzero.
+		"""
+		
+		if do_not_jump == 0:
+			self.pc = new_pc
+		
+	def op7(self, arg1: int, arg2: int, write_addr: int) -> None:
+		"""
+		Set the given address to 1 if arg1 is less than arg2, or 0 otherwise.
+		"""
+		
+		self.program[write_addr] = int(arg1 < arg2)
+	
+	def op8(self, arg1: int, arg2: int, write_addr: int) -> None:
+		"""
+		Set the given address to 1 if arg1 is equal to arg2, or 0 otherwise.
+		"""
+		
+		self.program[write_addr] = int(arg1 == arg2)
