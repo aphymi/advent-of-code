@@ -35,7 +35,6 @@ def run_through_feedback_mode(
 	
 	last_exec_ind = -1
 	last_outputs = [0]
-	done = False
 	while executors[-1].program[executors[-1].pc] != 99:
 		cur_executor_ind = (last_exec_ind + 1) % len(executors)
 		cur_executor = executors[cur_executor_ind]
@@ -56,25 +55,8 @@ def run_through_feedback_mode(
 		cur_executor.outputs = []
 		
 		last_exec_ind = cur_executor_ind
-		if done:
-			break
 	
 	return last_outputs[-1]
-		
-
-def get_possible_phase_settings(length: int = 5) -> List[int]:
-	for perm in itertools.permutations([0,1,2,3,4]):
-		yield perm
-	
-	"""
-	if length == 0:
-		yield []
-	
-	else:
-		for phase in range(0, 5):
-			for setting in get_possible_phase_settings(length - 1):
-				yield [phase] + setting
-	"""
 	
 
 def part1(program: intcode.IntcodeProgram) -> int:
