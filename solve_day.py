@@ -5,8 +5,6 @@ from importlib import import_module
 import os
 import sys
 
-import requests
-
 from input_retrieval import retrieve_input, retrieve_test_input
 
 def dname(day):
