@@ -4,8 +4,9 @@ __pycache__/
 # Editor files
 .vscode/
 
-# AoC Session cookie; definitely do *not* want to commit.
+# Private values
 .session
+.token
 
 # No need to commit test inputs.
 test_input.txt
