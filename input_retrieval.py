@@ -96,4 +96,4 @@ def retrieve_test_input() -> List[str]:
 	"""
 	
 	with open("test_input.txt") as file:
-		return file.readlines()
+		return file.read().splitlines()
