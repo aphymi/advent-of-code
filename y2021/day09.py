@@ -1,53 +1,16 @@
 import collections
 import math
-from typing import Generator, Generic, TypeVar
+from typing import Generator
+
+from util import tile_map
 
 from util.parse import *
 
 
-T = TypeVar("T")
-TileData = tuple[T, int, int]
-
-class TileMap(Generic[T]):
-	def __init__(self, state: list[list[T]]) -> None:
-		self.state = state
-	
-	def get_at(self, x: int, y: int) -> T:
-		return self.state[y][x]
-
-	def walk(self) -> Generator[TileData, None, None]:
-		for y, row in enumerate(self.state):
-			for x, value in enumerate(row):
-				yield (value, x, y)
-
-	def get_adjacent_4(self, x: int, y: int) -> list[TileData]:
-		modifiers = [
-			(0, -1),
-			(-1, 0),
-			(1, 0),
-			(0, 1),
-		]
-
-		adjacent = []
-		for modifier in modifiers:
-			adj_x = x + modifier[0]
-			adj_y = y + modifier[1]
-				
-			if adj_y not in range(len(self.state)):
-				continue
-
-			if adj_x not in range(len(self.state[adj_y])):
-				continue
-		
-			adjacent.append((self.state[adj_y][adj_x], adj_x, adj_y))
-		
-		return adjacent
-
-
-CaveMap = TileMap[int]
+CaveMap = tile_map.TileMap[int]
 
 def parse_input(lines: list[str]) -> CaveMap:
-	return TileMap([
+	return tile_map.TileMap([
 		[
 			int(char)
 			for char in list(row)
@@ -55,7 +18,9 @@ def parse_input(lines: list[str]) -> CaveMap:
 		for row in lines
 	])
 
-def get_low_points(map: TileMap[T]) -> Generator[TileData, None, None]:
+def get_low_points(
+	map: tile_map.TileMap,
+) -> Generator[tile_map.TileData, None, None]:
 	for value, x, y in map.walk():
 		is_low_point = all(
 			adj_value > value
@@ -72,7 +37,10 @@ def part1(map: CaveMap) -> int:
 
 	return risk_sum
 
-def get_basin(map: CaveMap, low_point: TileData) -> list[TileData]:
+def get_basin(
+	map: CaveMap,
+	low_point: tile_map.TileData
+) -> list[tile_map.TileData]:
 	known_basin = set()
 	to_investigate = collections.deque([low_point])
 
