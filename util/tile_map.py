@@ -29,6 +29,17 @@ class TileMap(Generic[T]):
 		for y, row in enumerate(self.state):
 			for x, value in enumerate(row):
 				yield (value, x, y)
+	
+	def contains_coords(self, x: int, y: int) -> bool:
+		return (
+			y in range(len(self.state))
+			and x in range(len(self.state[y]))
+		)
+	
+	def print(self) -> None:
+		for row in self.state:
+			print("".join(str(c) for c in row))
+		print()
 
 	def get_adjacent_4(self, x: int, y: int) -> Generator[TileData, None, None]:
 		"""
@@ -42,15 +53,11 @@ class TileMap(Generic[T]):
 			(0, 1),
 		]
 
-		adjacent = []
 		for modifier in modifiers:
 			adj_x = x + modifier[0]
 			adj_y = y + modifier[1]
-				
-			if adj_y not in range(len(self.state)):
-				continue
 
-			if adj_x not in range(len(self.state[adj_y])):
+			if not self.contains_coords(adj_x, adj_y):
 				continue
 				
 			yield (
