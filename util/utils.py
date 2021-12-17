@@ -27,6 +27,9 @@ def flatten(
 		for item in iterable:
 			yield item
 
+def ceildiv(a: int, b: int) -> int:
+	return -(a // -b)
+
 
 if __name__ == "__main__":
 	print(list(sliding_window(range(10), 3)))
