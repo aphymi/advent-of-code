@@ -30,6 +30,12 @@ def flatten(
 def ceildiv(a: int, b: int) -> int:
 	return -(a // -b)
 
+def manhattan_distance(a: Iterable[float], b: Iterable[float]) -> float:
+	return sum(
+		abs(a_part - b_part)
+		for a_part, b_part in zip(a, b)
+	)
+
 
 if __name__ == "__main__":
 	print(list(sliding_window(range(10), 3)))
