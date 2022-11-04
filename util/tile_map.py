@@ -12,10 +12,22 @@ class TileMap(Generic[T]):
 	def __init__(self, state: list[list[T]]) -> None:
 		self.state = state
 	
-	def get_at(self, x: int, y: int) -> T:
+	def get_at(
+		self,
+		x: int,
+		y: int,
+		safe: bool = False,
+	) -> T:
 		"""
 		Return the value at the given x and y coordinates.
+
+		Args:
+			safe -- if True, returns None for out-of-bounds coordinates;
+				otherwise raises an exception
 		"""
+
+		if safe and not self.contains_coordinates(x, y):
+			return None
 
 		return self.state[y][x]
 	
@@ -25,6 +37,20 @@ class TileMap(Generic[T]):
 		"""
 
 		self.state[y][x] = new_value
+	
+	def get_height(self) -> int:
+		"""
+		Return the height (y axis) of the map.
+		"""
+
+		return len(self.state)
+
+	def get_width(self) -> int:
+		"""
+		Return the width (x axis) of the map.
+		"""
+
+		return len(self.state[0])
 
 	def walk(self) -> Generator[TileData, None, None]:
 		"""
@@ -77,9 +103,19 @@ class TileMap(Generic[T]):
 				adj_y,
 			)
 	
-	def get_adjacent_8(self, x: int, y: int) -> Generator[TileData, None, None]:
+	def get_adjacent_8(
+		self,
+		x: int,
+		y: int,
+		include_out_of_bounds: bool = False,
+	) -> Generator[TileData, None, None]:
 		"""
 		Generate an enumeration of the tiles adjacent to x and y.
+
+		This function yields in the following order:
+		123
+		4X5
+		678
 		"""
 
 		for y_mod in (-1, 0, 1):
@@ -90,11 +126,14 @@ class TileMap(Generic[T]):
 				adj_x = x + x_mod
 				adj_y = y + y_mod
 
-				if not self.contains_coordinates(adj_x, adj_y):
-					continue
-
-				yield (
-					self.get_at(adj_x, adj_y),
-					adj_x,
-					adj_y,
-				)
+				if self.contains_coordinates(adj_x, adj_y):
+					yield (
+						self.get_at(adj_x, adj_y),
+						adj_x,
+						adj_y,
+					)
+				
+				elif include_out_of_bounds:
+					yield (None, adj_x, adj_y)
+				
+				# else: continue
