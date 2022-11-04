@@ -77,12 +77,12 @@ def split_on(spl: str = None) -> List[List[str]]:
 TIn = TypeVar("TIn")
 TOut = TypeVar("TOut")
 def map_func(
-		func: Callable[[TIn], TOut],
-		) -> Callable[[Iterable[TIn]], List[TOut]]:
+	func: Callable[[TIn], TOut],
+) -> Callable[[Iterable[TIn]], List[TOut]]:
 	"""
 	Return a function that maps func onto every item of its input.
 	"""
-	
+
 	def mapped(inp):
 		return [func(line) for line in inp]
 	
