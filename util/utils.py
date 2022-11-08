@@ -1,4 +1,5 @@
 from collections import deque
+import itertools
 from typing import Generator, Iterable, Tuple, TypeVar
 
 
@@ -35,6 +36,17 @@ def manhattan_distance(a: Iterable[float], b: Iterable[float]) -> float:
 		abs(a_part - b_part)
 		for a_part, b_part in zip(a, b)
 	)
+
+def pairwise(iterable: Iterable[X]) -> Generator[Tuple[X, X], None, None]:
+	"""
+	Return successive overlapping pairs taken from the input iterable.
+
+	Equivalent to Python3.10's `itertools.pairwise`, for use in earlier python
+	versions.
+	"""
+	a, b = itertools.tee(iterable)
+	next(b, None)
+	return zip(a, b)
 
 
 if __name__ == "__main__":

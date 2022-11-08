@@ -57,6 +57,33 @@ def parallel(*functions: Callable) -> Callable[..., List[Tuple]]:
 	
 	return paralleled
 
+def parallel_tuple(*functions: Callable) -> Callable[..., List[Tuple]]:
+	"""
+	Compose several functions parallelly, so that each is applied to the
+	corresponding item in the sequence of input.
+
+	Examples:
+	>>> plus1 = lambda x: x+1
+	>>> plus2 = lambda x: x+2
+	>>> plus3 = lambda x: x+3
+	>>> paralleled = parallel_tuple(plus1, plus2, plus3)
+	>>> data = [(0, 1, 2), (101, 102, 103)]
+	>>> paralleled(data)
+	[(1, 3, 5), (102, 104, 106)]
+	"""
+
+	def paralleled(inp):
+		new_lines = []
+		for line in inp:
+			new_line = tuple(
+				func(line_part)
+				for func, line_part in zip(functions, line)
+			)
+			new_lines.append(new_line)
+		return new_lines
+	
+	return paralleled
+
 def split(lines: Iterable[str]) -> List[List[str]]:
 	"""
 	Return the result of mapping str.split() onto every item in the argument.
@@ -97,8 +124,8 @@ def single_line(lines: Sequence[T]) -> T:
 	return lines[0]
 
 def get_regex_matches(
-		regex: Union[str, Pattern],
-		) -> Callable[[Iterable[str]], List[List[str]]]:
+	regex: Union[str, Pattern],
+) -> Callable[[Iterable[str]], List[List[str]]]:
 	"""
 	Return a function that finds all regex matches on each line of its input.
 	
