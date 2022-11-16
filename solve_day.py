@@ -4,6 +4,7 @@ import argparse
 from importlib import import_module
 import os
 import sys
+import time
 
 from input_retrieval import retrieve_input, retrieve_test_input
 
@@ -87,7 +88,6 @@ if __name__ == "__main__":
 	if hasattr(solver_module, "parse_input"):
 		solver_input = solver_module.parse_input(solver_input)
 	
-	
 	for part in parts_to_eval:
 		part_name = "part" + part
 		if not hasattr(solver_module, part_name):
@@ -97,6 +97,10 @@ if __name__ == "__main__":
 			)
 		else:
 			part_solver = getattr(solver_module, part_name)
+			start = time.time()
 			part_solution = part_solver(solver_input)
+			end = time.time()
+
+			total_time = round(end - start, 2)
 			
-			print(f"Part {part} solution: {part_solution}")
+			print(f"Part {part} solution ({total_time}s): {part_solution}")
