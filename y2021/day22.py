@@ -120,8 +120,5 @@ def part1(full_reboot_steps: List[RebootStep]) -> int:
 	return get_activated_cubes(initial_reboot_steps)
 
 def part2(full_reboot_steps: List[RebootStep]) -> int:
-	start = time.time()
 	value = get_activated_cubes(full_reboot_steps)
-	end = time.time()
-	print(f"{end - start}s")
 	return value
