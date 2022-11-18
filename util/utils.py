@@ -49,5 +49,28 @@ def pairwise(iterable: Iterable[X]) -> Generator[Tuple[X, X], None, None]:
 	return zip(a, b)
 
 
+def chunk(
+	iterable: Iterable[X],
+	chunk_size: int,
+) -> Generator[tuple[X], None, None]:
+	"""
+	Split an iterable into chunks of the given size.
+
+	>>> list(chunk([1,2,3,4,5,6,7,8,9], 3))
+	[[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+	"""
+
+	current_chunk = []
+	for item in iterable:
+		if len(current_chunk) >= chunk_size:
+			yield tuple(current_chunk)
+			current_chunk = []
+		
+		current_chunk.append(item)
+	
+	if len(current_chunk) > 0:
+		yield tuple(current_chunk)
+
+
 if __name__ == "__main__":
 	print(list(sliding_window(range(10), 3)))
