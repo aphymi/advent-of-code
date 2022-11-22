@@ -48,11 +48,10 @@ def initialise_solver(year: int, day: int) -> None:
 		with open(day_file_path, "w") as day_file:
 			day_file.write(initial_solver_code)
 		
-		print(f"Initialised solver at {day_file_path}")
+		print(f"No solver found; initialising at {day_file_path}")
 	
 	if not os.path.exists(input_file_path):
 		retrieve_input(year, day)
-		print(f"Initialised input at {input_file_path}")
 
 
 if __name__ == "__main__":
