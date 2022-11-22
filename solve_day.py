@@ -2,9 +2,12 @@
 
 import argparse
 from importlib import import_module
+import inspect
 import os
+import pathlib
 import sys
 import time
+import types
 
 from input_retrieval import retrieve_input, retrieve_test_input
 
@@ -13,6 +16,44 @@ def dname(day):
 
 def yname(year):
 	return "y{}".format(year)
+
+def initialise_solver(year: int, day: int) -> None:
+	year_dir = f"y{year}"
+	day_file_path = f"{year_dir}/day{day:02d}.py"
+	input_dir = f"{year_dir}/inputs"
+	input_file_path = f"{input_dir}/day{day:02d}.txt"
+
+	pathlib.Path(input_dir).mkdir(parents=True, exist_ok=True)
+
+	if not os.path.exists(day_file_path):
+		# use cleandoc to remove leading indentation
+		initial_solver_code = (
+			inspect.cleandoc(
+				"""
+				from util.parse import *
+
+
+				parse_input = get_ints
+
+				def part1(inp) -> int:
+					return 0
+				
+				def part2(inp) -> int:
+					return 0
+				"""
+			).replace(" " * 8, "\t")
+			+ "\n"
+		)
+
+		with open(day_file_path, "w") as day_file:
+			day_file.write(initial_solver_code)
+		
+		print(f"Initialised solver at {day_file_path}")
+	
+	if not os.path.exists(input_file_path):
+		retrieve_input(year, day)
+		print(f"Initialised input at {input_file_path}")
+
 
 if __name__ == "__main__":
 	
@@ -34,6 +75,18 @@ if __name__ == "__main__":
 		const=True,
 		default=False,
 		help="use test input (from .test file) instead of real input"
+	)
+	parser.add_argument(
+		"--init",
+		"-i",
+		dest="init",
+		action="store_const",
+		const=True,
+		default=False,
+		help=(
+			"instead of running the day solver, initialise the given day's "
+			"solver script and input"
+		)
 	)
 	parser.add_argument(
 		"--part",
@@ -65,6 +118,11 @@ if __name__ == "__main__":
 		print("Error: Day must be in range [1,25].")
 		sys.exit(1)
 	
+	if args.init:
+		initialise_solver(args.year, args.day)
+		sys.exit(0)
+	
+	solver_module: types.ModuleType
 	try:
 		solver_module = import_module(
 			"y{year}.day{day:02d}".format(
@@ -74,8 +132,9 @@ if __name__ == "__main__":
 		)
 	
 	except ImportError:
-		raise Exception(f"No solver found for year {args.year}, day {args.day}")
-	
+		print(f"No solver found for year {args.year}, day {args.day}")
+		sys.exit(1)
+		
 	if args.testing:
 		solver_input = retrieve_test_input()
 	
