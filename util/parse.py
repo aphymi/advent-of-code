@@ -123,6 +123,13 @@ def single_line(lines: Sequence[T]) -> T:
 	
 	return lines[0]
 
+def joined_line(lines: Iterable[str]) -> str:
+	"""
+	Return the input, all joined into a single line with newlines.
+	"""
+
+	return "\n".join(lines)
+
 def get_regex_matches(
 	regex: Union[str, Pattern],
 ) -> Callable[[Iterable[str]], List[List[str]]]:
