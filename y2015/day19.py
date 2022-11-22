@@ -66,7 +66,7 @@ def part2(inp) -> int:
 		(b, a) for a, b in reaction_rules
 	]
 
-	reversed_rules.sort(key=lambda rule: len(rule[0]))
+	reversed_rules.sort(key=lambda rule: -len(rule[0]))
 
 	start_reaction = ReactionStep(molecule=target_molecule, steps=0)
 	queue = [start_reaction]
