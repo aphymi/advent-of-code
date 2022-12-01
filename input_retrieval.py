@@ -37,6 +37,11 @@ def download_input_from_server(year: int, day:int) -> str:
 	r = requests.get(
 		f"https://adventofcode.com/{year}/day/{day}/input",
 		cookies={"session": session},
+		headers={
+			"User-Agent": (
+				"github.com/aphymi/advent-of-code/ by same username at gmail"
+			),
+		},
 	)
 	
 	# If the server responded with a bad status code, raise an exception.
