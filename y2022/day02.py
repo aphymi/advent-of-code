@@ -12,10 +12,6 @@ RoundGuide = tuple[str, str]
 move_dominance = ["A", "B", "C"]
 
 def get_round_score(opponent_move: str, player_move: str) -> int:
-	# for a given index i, i+1 beats i, and i beats i-1
-	# (all % 3)
-	move_dominance = ["A", "B", "C"]
-
 	opponent_move_index = move_dominance.index(opponent_move)
 	player_move_index = move_dominance.index(player_move)
 
