@@ -84,6 +84,28 @@ def parallel_tuple(*functions: Callable) -> Callable[..., List[Tuple]]:
 	
 	return paralleled
 
+def zip_input_with(*functions: Callable) -> Callable[[Iterable], List]:
+	"""
+	Create a function which applies the given functions across an iterable
+	input.
+
+	Examples:
+	>>> plus1 = lambda x: x+1
+	>>> plus2 = lambda x: x+2
+	>>> plus3 = lambda x: x+3
+	>>> zipped = zip_input_with(plus1, plus2, plus3)
+	>>> data = [0, 0, 0]
+	>>> zipped(data)
+	[1, 2, 3]
+	"""
+	def zipped(inp):
+		return [
+			func(inp_part)
+			for func, inp_part in zip(functions, inp)
+		]
+	
+	return zipped
+
 def split(lines: Iterable[str]) -> List[List[str]]:
 	"""
 	Return the result of mapping str.split() onto every item in the argument.
