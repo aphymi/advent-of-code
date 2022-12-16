@@ -153,4 +153,3 @@ def part2(sensor_beacon_pairs: list[SensorBeaconPair]) -> int:
 			return free_x * (4 * 10**6) + y
 
 	raise Exception("Couldn't find free x")
-
